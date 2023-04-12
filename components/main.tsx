@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Flights from "./flights";
-import { useGoogleAuth } from "../providers/googleAuthProvider";
+import { useWeb3Auth } from "../providers/web3AuthProvider";
+import { UserInfo } from "@web3auth/base";
 
 interface Airline {
   name: string
@@ -19,6 +20,8 @@ export interface IFlightInfo {
 const Main = () => {
   const [messages, setMessages] = useState<Array<IFlightInfo>>([]);
 
+  const { isLoggedIn, isLoading, web3Auth, web3Login: onLogin, logout: onLogout } = useWeb3Auth()
+/*
   const {
     token,
     onLogin,
@@ -40,38 +43,39 @@ const Main = () => {
 
     init()
   }, [token, isLoggedIn, setIsLoading])
-  /*
-      useEffect(() => {
-          const init = async () => {
-              if(isLoggedIn) {
-                  const user = await web3Auth?.getUserInfo() as UserInfo
-                  // console.log(user)
-                  console.log('oAuthAccessToken ==>', user.oAuthAccessToken)
-                  const response = await fetch('/api/gmail', {
-                      method: 'get',
-                      headers: {
-                        'content-type': 'application/json',
-                        'Authorization': `${user.oAuthAccessToken}`
-                      }
-                    });
-                  
-                  if (response.status !== 200) {
-                      const { message } = await response.json()
-                      console.log(message);
-                      return;
-                  }
-  
-                  const { data } = await response.json()
-                  setMessages(data);                
-              }
-          }
-  
-          init()
-      }, [isLoggedIn, web3Auth])
   */
-  if (!isGapiLoaded || !isGsiLoaded) {
-    return <></>;
-  }
+  
+  useEffect(() => {
+      const init = async () => {
+          if(isLoggedIn) {
+              const user = await web3Auth?.getUserInfo() as UserInfo
+              // console.log(user)
+              console.log('oAuthAccessToken ==>', user.oAuthAccessToken)
+              const response = await fetch('/api/gmail', {
+                  method: 'get',
+                  headers: {
+                    'content-type': 'application/json',
+                    'Authorization': `${user.oAuthAccessToken}`
+                  }
+                });
+              
+              if (response.status !== 200) {
+                  const { message } = await response.json()
+                  console.log(message);
+                  return;
+              }
+
+              const { data } = await response.json()
+              setMessages(data);                
+          }
+      }
+
+      init()
+  }, [isLoggedIn, web3Auth])
+  
+  // if (!isGapiLoaded || !isGsiLoaded) {
+  //   return <></>;
+  // }
 
   return (
     <>
